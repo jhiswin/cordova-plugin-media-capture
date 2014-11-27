@@ -703,13 +703,20 @@
     NSString* filePath;
     int i = 1;
     do {
-        filePath = [NSString stringWithFormat:@"%@/audio_%03d.wav", docsPath, i++];
+        filePath = [NSString stringWithFormat:@"%@/audio_%03d.m4a", docsPath, i++];
     } while ([fileMgr fileExistsAtPath:filePath]);
 
     NSURL* fileURL = [NSURL fileURLWithPath:filePath isDirectory:NO];
 
+    // TODO make audio format and settings optional
+    NSDictionary *recordSettings = [NSDictionary dictionaryWithObjectsAndKeys:
+                                    [NSNumber numberWithInt: kAudioFormatMPEG4AAC], AVFormatIDKey,
+                                    [NSNumber numberWithFloat:16000.0], AVSampleRateKey,
+                                    [NSNumber numberWithInt: 1], AVNumberOfChannelsKey,
+                                    nil];
+
     // create AVAudioPlayer
-    self.avRecorder = [[AVAudioRecorder alloc] initWithURL:fileURL settings:nil error:&err];
+    self.avRecorder = [[AVAudioRecorder alloc] initWithURL:fileURL settings:recordSettings error:&err];
     if (err) {
         NSLog(@"Failed to initialize AVAudioRecorder: %@\n", [err localizedDescription]);
         self.avRecorder = nil;
