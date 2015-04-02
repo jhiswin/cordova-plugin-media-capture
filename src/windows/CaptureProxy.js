@@ -308,10 +308,11 @@ module.exports = {
             }, function() { errorCallback(new CaptureError(CaptureError.CAPTURE_NO_MEDIA_FILES)); });
         };
 
+		// TODO make encoding format (priority) configurable
         mediaCapture.initializeAsync(mediaCaptureSettings).done(function () {
-            localAppData.createFileAsync("captureAudio.mp3", generateUniqueName).then(function (storageFile) {
+            localAppData.createFileAsync("captureAudio.m4a", generateUniqueName).then(function (storageFile) {
                 capturedFile = storageFile;
-                mediaCapture.startRecordToStorageFileAsync(mp3EncodingProfile, capturedFile).then(function () {
+                mediaCapture.startRecordToStorageFileAsync(m4aEncodingProfile, capturedFile).then(function () {
                     stopRecordTimeout = setTimeout(stopRecord, audioOptions.duration * 1000);
                 }, function (err) {
                     // -1072868846 is the error code for "No suitable transform was found to encode or decode the content."
@@ -320,9 +321,9 @@ module.exports = {
                         // first we clear existing timeout to prevent success callback to be called with invalid arguments
                         // second we start same actions to try to record m4a audio
                         clearTimeout(stopRecordTimeout);
-                        localAppData.createFileAsync("captureAudio.m4a", generateUniqueName).then(function (storageFile) {
+                        localAppData.createFileAsync("captureAudio.mp3", generateUniqueName).then(function (storageFile) {
                             capturedFile = storageFile;
-                            mediaCapture.startRecordToStorageFileAsync(m4aEncodingProfile, capturedFile).then(function () {
+                            mediaCapture.startRecordToStorageFileAsync(mp3EncodingProfile, capturedFile).then(function () {
                                 stopRecordTimeout = setTimeout(stopRecord, audioOptions.duration * 1000);
                             }, function() {
                                 // if we here, we're totally failed to record either mp3 or m4a
